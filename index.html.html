@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qual minha afinidade com os Santos do encontro de hoje?</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ouro:#c19a45;--ouro-claro:#f7f0e1;--texto:#2d2a26;--suave:#7a7368;--borda:#ece6da;--fundo:#fdfcfa}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Manrope',system-ui,sans-serif;background:var(--fundo);color:var(--texto)}
+  .wrap{max-width:740px;margin:0 auto;padding:26px 18px 60px}
+  header{text-align:center;margin-bottom:22px}
+  .cruz{font-size:28px;color:var(--ouro)}
+  h1{font-size:clamp(22px,5vw,31px);font-weight:800;margin:8px 0 6px;letter-spacing:-.3px}
+  .sub{color:var(--suave);font-size:15px;margin:0;line-height:1.5}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+  .chip{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;color:#fff;white-space:nowrap}
+  .card{background:#fff;border:1px solid var(--borda);border-radius:18px;padding:24px;box-shadow:0 6px 24px rgba(80,60,20,.06);margin-bottom:16px}
+  .tela{display:none}.tela.ativa{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  label{font-weight:700;font-size:14px;display:block;margin-bottom:8px}
+  input{width:100%;padding:14px 16px;font:inherit;font-size:16px;border:1.5px solid var(--borda);border-radius:12px;outline:none}
+  input:focus{border-color:var(--ouro)}
+  .btn{border:none;font:inherit;font-weight:700;font-size:16px;padding:14px 22px;border-radius:12px;cursor:pointer;background:var(--ouro);color:#fff}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.sec{background:#fff;color:var(--texto);border:1.5px solid var(--borda)}
+  .full{width:100%;margin-top:14px}
+  .progresso{height:8px;background:var(--ouro-claro);border-radius:99px;overflow:hidden;margin-bottom:10px}
+  .progresso div{height:100%;background:var(--ouro);transition:width .3s}
+  .meta{font-size:13px;color:var(--suave);margin-bottom:14px}
+  .historia{font-size:14px;line-height:1.55;color:#5a544a;background:var(--ouro-claro);border-radius:12px;padding:12px 14px;margin-bottom:14px}
+  .pergunta{font-size:20px;font-weight:700;line-height:1.35;margin:0 0 16px}
+  .opcao{display:block;width:100%;text-align:left;font:inherit;font-size:16px;line-height:1.4;padding:15px 16px;margin-bottom:10px;border:1.5px solid var(--borda);border-radius:12px;background:#fff;cursor:pointer;color:var(--texto)}
+  .opcao:hover{border-color:var(--ouro)}
+  .opcao.sel{border-color:var(--ouro);background:var(--ouro-claro);font-weight:700}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+  .destaque{text-align:center;border:2px solid var(--ouro);background:linear-gradient(180deg,#fff,var(--ouro-claro))}
+  .grande{font-size:25px;font-weight:800;margin:6px 0}
+  .santo-res{margin-bottom:26px}
+  .topo{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .topo b{font-size:16px}.topo span{font-weight:800;font-size:18px}
+  .barra{height:16px;background:#f2eee6;border-radius:99px;overflow:hidden}
+  .barra div{height:100%;width:0;border-radius:99px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+  .porque{font-size:14.5px;line-height:1.6;color:#4a453d;margin-top:10px}
+  .porque p{margin:0 0 8px}
+  .porque ul{margin:6px 0 10px;padding-left:18px}
+  .porque li{margin-bottom:6px}
+  .convite{background:var(--ouro-claro);border-radius:10px;padding:10px 12px;font-size:14px}
+  .centro{text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="cruz">✝</div>
+    <h1>Qual minha afinidade com os Santos do encontro de hoje?</h1>
+    <p class="sub">Não existe resposta certa ou errada. Responda com o coração, pensando em como você realmente age.</p>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <section id="t-inicio" class="tela ativa">
+    <div class="card">
+      <label for="nome">Qual é o seu nome?</label>
+      <input id="nome" maxlength="50" placeholder="Digite seu nome" autocomplete="off">
+      <button class="btn full" onclick="iniciar()">Começar</button>
+    </div>
+  </section>
+
+  <section id="t-quiz" class="tela">
+    <div class="card">
+      <div class="progresso"><div id="prog"></div></div>
+      <div class="meta" id="cont"></div>
+      <div class="historia" id="historia"></div>
+      <div class="pergunta" id="pergunta"></div>
+      <div id="opcoes"></div>
+      <div class="nav">
+        <button class="btn sec" id="bVoltar" onclick="voltar()">Voltar</button>
+        <button class="btn" id="bAvancar" onclick="avancar()" disabled>Próxima</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="t-res" class="tela">
+    <div class="card destaque" id="destaque"></div>
+    <div class="card"><div id="lista"></div></div>
+    <div class="centro"><button class="btn sec" onclick="reiniciar()">Responder novamente</button></div>
+  </section>
+</div>
+
+<script>
+const SANTOS = [
+  {id:'bento', nome:'São Bento', cor:'#6b4f3a',
+   essencia:'a paz de quem une oração e trabalho, e encontra Deus na rotina, na ordem e na vida em comunidade',
+   convite:'Ofereça a Deus as tarefas simples do seu dia. Até o trabalho mais comum pode virar oração.'},
+  {id:'rita', nome:'Santa Rita de Cássia', cor:'#8a5aa8',
+   essencia:'o coração que perdoa mesmo ferido e não desiste de confiar quando tudo parece impossível',
+   convite:'Entregue a Deus aquela dor ou situação que parece não ter saída. Ele faz florescer rosas no inverno.'},
+  {id:'teresinha', nome:'Santa Teresinha', cor:'#d0708c',
+   essencia:'o amor nos pequenos gestos e a confiança de criança nos braços do Pai',
+   convite:'Faça hoje um pequeno gesto de carinho escondido, sem esperar que ninguém perceba.'},
+  {id:'joao', nome:'São João Batista', cor:'#3b82a8',
+   essencia:'a coragem de falar a verdade com amor e a humildade de diminuir para que Jesus cresça',
+   convite:'Pense em alguém para quem você pode ser ponte até Jesus, com palavras ou exemplo.'},
+  {id:'teresa', nome:"Santa Teresa d'Ávila", cor:'#b0873a',
+   essencia:'a amizade íntima com Deus, a determinação e a alegria que não se deixa abater',
+   convite:'Reserve alguns minutos de silêncio hoje para conversar com Deus como quem fala com um amigo.'}
+];
+
+// Cada alternativa vale 3 (muito parecida com o santo), 2 (em caminho) ou 1 (ainda distante)
+const PERGUNTAS = [
+ {santo:'bento',
+  historia:'Um jovem deixou a agitação da cidade grande para buscar Deus no silêncio. Depois criou comunidades onde a oração e o trabalho caminhavam juntos.',
+  texto:'Quando sua rotina fica pesada e repetitiva, como você reage?',
+  op:[
+   {t:'Tento fazer cada tarefa com amor, como se a oferecesse a Deus', p:3, r:'Você transforma a rotina em oferta, bem como Bento ensinou com o "reza e trabalha".'},
+   {t:'Cumpro tudo, mas peço força a Deus para aguentar', p:2, r:'Você cumpre seus deveres e busca força em Deus, um caminho bem perto do de Bento.'},
+   {t:'Fico ansioso(a) e conto as horas para acabar', p:1, r:'A rotina às vezes te pesa, e Bento mostra que até ela pode trazer paz.'}]},
+ {santo:'rita',
+  historia:'Uma mulher viveu um casamento difícil, perdeu o marido de forma violenta e, mesmo com o coração partido, perdoou quem o matou.',
+  texto:'Quando alguém te machuca profundamente, o que costuma acontecer no seu coração?',
+  op:[
+   {t:'Mesmo com dor, rezo por essa pessoa e busco perdoar', p:3, r:'Você reza por quem te feriu. É o coração de Rita, que perdoou o imperdoável.'},
+   {t:'Quero perdoar, mas preciso de tempo para a ferida fechar', p:2, r:'Você deseja perdoar e respeita o tempo da cura. Rita também viveu esse processo.'},
+   {t:'Me afasto e guardo a mágoa para me proteger', p:1, r:'Proteger-se é humano, e Rita mostra que o perdão também liberta quem perdoa.'}]},
+ {santo:'teresinha',
+  historia:'Uma jovem entrou para o convento aos 15 anos. Não fez grandes obras: amou nas pequenas coisas e chamou isso de seu "pequeno caminho" até Deus.',
+  texto:'Para você, o que mais demonstra amor no dia a dia?',
+  op:[
+   {t:'Um gesto simples e escondido, que ninguém vê', p:3, r:'Você valoriza o amor discreto e escondido, a própria "Pequena Via" de Teresinha.'},
+   {t:'Estar presente quando alguém precisa', p:2, r:'Para você, amar é estar presente. Teresinha fazia isso nos detalhes.'},
+   {t:'Algo grandioso, que marque a vida da pessoa', p:1, r:'Você pensa em gestos grandes, e Teresinha lembra que o pequeno também é imenso aos olhos de Deus.'}]},
+ {santo:'joao',
+  historia:'Um homem viveu no deserto e preparou o povo para a chegada de Jesus. Não teve medo de dizer a verdade, nem diante de um rei poderoso.',
+  texto:'Quando vê algo errado acontecendo perto de você, como age?',
+  op:[
+   {t:'Falo com coragem, mesmo que eu perca algo com isso', p:3, r:'Você tem a coragem de falar a verdade mesmo quando custa, como João diante de Herodes.'},
+   {t:'Falo, mas escolho bem o momento e as palavras', p:2, r:'Você fala a verdade com prudência. A coragem de João já mora em você.'},
+   {t:'Prefiro me calar para evitar conflito', p:1, r:'Evitar conflito às vezes parece mais seguro. João inspira a confiar que Deus sustenta quem fala com amor.'}]},
+ {santo:'teresa',
+  historia:'Uma religiosa dizia que rezar é conversar a sós, como amigos, com Aquele que sabemos que nos ama.',
+  texto:'Como é a sua oração na maior parte dos dias?',
+  op:[
+   {t:'Uma conversa sincera, como com um amigo próximo', p:3, r:'Sua oração é conversa de amigo, exatamente como Teresa d\'Ávila ensinava.'},
+   {t:'Rezo as orações que conheço, com fé', p:2, r:'Você reza com fé e fidelidade, uma base firme para a intimidade que Teresa viveu.'},
+   {t:'Rezo mais quando estou com problemas', p:1, r:'Você procura Deus nas horas difíceis. Teresa convida a procurá-Lo também nas horas tranquilas.'}]},
+
+ {santo:'bento',
+  historia:'Um homem viveu três anos sozinho numa gruta, em silêncio, antes de fundar seus mosteiros. Para ele, o silêncio era o lugar onde Deus fala.',
+  texto:'Como você se sente quando fica em silêncio, sem celular nem barulho?',
+  op:[
+   {t:'Em paz, sinto que ali encontro Deus', p:3, r:'Você encontra Deus no silêncio, assim como Bento na gruta de Subiaco.'},
+   {t:'Gosto, mas me distraio com facilidade', p:2, r:'Você valoriza o silêncio, mesmo distraído(a). Bento também aprendeu aos poucos.'},
+   {t:'Inquieto(a), preciso logo de algo para fazer', p:1, r:'O silêncio ainda te inquieta. Bento mostra que nele mora um descanso profundo.'}]},
+ {santo:'rita',
+  historia:'Uma mulher pediu três vezes para entrar no convento e foi recusada. Não desistiu, e diz a tradição que Deus mesmo abriu as portas para ela.',
+  texto:'Quando um sonho ou uma oração parece não ter resposta, você…',
+  op:[
+   {t:'Continuo confiando e insistindo, mesmo sem ver saída', p:3, r:'Você persevera mesmo sem ver saída. Por isso Rita é a santa das causas impossíveis.'},
+   {t:'Confio, mas às vezes me desanimo no caminho', p:2, r:'Você confia, mesmo com desânimos no meio do caminho, que Rita também conheceu.'},
+   {t:'Costumo desistir e seguir outro rumo', p:1, r:'Às vezes você desiste cedo. Rita lembra que Deus abre portas no tempo d\'Ele.'}]},
+ {santo:'teresinha',
+  historia:'Uma jovem se sentia pequena e imperfeita. Em vez de se cobrar, se jogava nos braços de Deus como uma criança confiante.',
+  texto:'Quando você falha ou erra, como se trata?',
+  op:[
+   {t:'Reconheço, peço perdão e confio no amor de Deus', p:3, r:'Você acolhe sua fragilidade e confia no Pai, com o mesmo coração de criança de Teresinha.'},
+   {t:'Fico chateado(a), mas logo tento recomeçar', p:2, r:'Você sabe recomeçar. Teresinha diria que é com a leveza de quem é amado(a).'},
+   {t:'Me cobro muito e demoro para me perdoar', p:1, r:'Você é exigente consigo. Teresinha ensina que Deus ama justamente os pequenos.'}]},
+ {santo:'joao',
+  historia:'Quando Jesus começou a pregar, um homem que já tinha muitos seguidores disse: "É preciso que Ele cresça e eu diminua", e deixou o protagonismo para Jesus.',
+  texto:'Quando alguém recebe o reconhecimento por algo que você ajudou a construir…',
+  op:[
+   {t:'Fico feliz, o importante é que o bem aconteceu', p:3, r:'Você se alegra com o bem, mesmo sem aplausos. É a humildade de João, que diminuiu para Jesus crescer.'},
+   {t:'Fico feliz, mas no fundo queria ser lembrado(a)', p:2, r:'Você se alegra, mesmo querendo ser lembrado(a). Esse coração honesto está a caminho de João.'},
+   {t:'Me sinto injustiçado(a) e magoado(a)', p:1, r:'Não ser reconhecido(a) te machuca. João mostra a liberdade de não precisar do aplauso.'}]},
+ {santo:'teresa',
+  historia:'Uma religiosa enfrentou doenças, críticas e muitas viagens difíceis para renovar sua comunidade, e mesmo assim mantinha o bom humor e a determinação.',
+  texto:'Diante de um grande desafio, qual é a sua postura?',
+  op:[
+   {t:'Sigo firme e até com alegria, porque sei que Deus está comigo', p:3, r:'Você enfrenta desafios com determinação e alegria, a marca de Teresa d\'Ávila.'},
+   {t:'Vou em frente, mas com medo e insegurança', p:2, r:'Você avança mesmo com medo. É coragem verdadeira, e Teresa também a conheceu.'},
+   {t:'Travo e penso em desistir', p:1, r:'Os desafios às vezes te paralisam. Teresa lembra que "Só Deus basta".'}]},
+
+ {santo:'bento',
+  historia:'Um homem ensinava seus irmãos a acolher todo visitante como se fosse o próprio Cristo, e a viver em comunidade com paciência.',
+  texto:'Como você lida com a convivência com pessoas difíceis (em casa, no trabalho, no grupo)?',
+  op:[
+   {t:'Procuro ver Cristo nelas e ter paciência', p:3, r:'Você enxerga Cristo no outro, como Bento pedia na acolhida aos hóspedes.'},
+   {t:'Tenho paciência até certo ponto', p:2, r:'Sua paciência existe, mesmo com limites. Bento também ensinava a crescer nela aos poucos.'},
+   {t:'Evito ao máximo conviver com elas', p:1, r:'Conviver com o diferente te cansa. Bento via na comunidade um caminho de santidade.'}]},
+ {santo:'rita',
+  historia:'Uma mulher manteve a doçura mesmo no sofrimento. No fim da vida, em pleno inverno, floresceu uma rosa no jardim da casa onde nasceu, como sinal de Deus.',
+  texto:'Quando a vida te traz sofrimento, o que acontece com sua fé?',
+  op:[
+   {t:'Ela se fortalece, me agarro ainda mais a Deus', p:3, r:'No sofrimento, sua fé se fortalece, como a rosa de Rita que floresceu no inverno.'},
+   {t:'Balança, mas não larga a mão de Deus', p:2, r:'Sua fé balança, mas não solta a mão de Deus. Rita também viveu isso.'},
+   {t:'Eu me pergunto onde Deus está', p:1, r:'Você questiona, e isso é humano. Rita mostra que Deus está presente mesmo no silêncio da dor.'}]},
+ {santo:'teresinha',
+  historia:'Uma jovem sonhava ser missionária no mundo inteiro, mas nunca saiu do convento. Descobriu que sua vocação era "ser o amor" no coração da Igreja.',
+  texto:'Quando sua vida não sai do jeito que você sonhou…',
+  op:[
+   {t:'Busco amar onde estou e florescer ali', p:3, r:'Você floresce onde Deus te plantou. Teresinha descobriu que sua vocação era o amor.'},
+   {t:'Aceito, mas ainda sinto falta do que sonhei', p:2, r:'Você aceita com saudade do que sonhou. Teresinha também entregou seus sonhos a Deus.'},
+   {t:'Sinto frustração e dificuldade de seguir', p:1, r:'A frustração pesa, e Teresinha mostra que o amor dá sentido a qualquer caminho.'}]},
+ {santo:'joao',
+  historia:'Um homem deixou o conforto e foi viver no deserto, com simplicidade, para se preparar e chamar todos à conversão.',
+  texto:'Quando Deus te pede uma mudança de vida, você…',
+  op:[
+   {t:'Deixo o que for preciso e me coloco em movimento', p:3, r:'Você se coloca em movimento quando Deus chama, como João no deserto.'},
+   {t:'Mudo aos poucos, no meu ritmo', p:2, r:'Você muda aos poucos, e essa é uma conversão real, como João pregava.'},
+   {t:'Tenho dificuldade de sair da zona de conforto', p:1, r:'Sair do conforto é difícil para você. João inspira a dar o primeiro passo.'}]},
+ {santo:'teresa',
+  historia:'Uma religiosa passou anos com uma vida de oração morna, até que, diante de uma imagem de Cristo sofredor, se converteu profundamente.',
+  texto:'Você sente que sua fé está…',
+  op:[
+   {t:'Viva e apaixonada, como uma amizade que cresce', p:3, r:'Sua fé está viva e apaixonada, como a de Teresa depois de sua conversão.'},
+   {t:'Em alguns dias acesa, em outros mais fria', p:2, r:'Sua fé tem altos e baixos. Teresa viveu anos assim antes de se incendiar de amor.'},
+   {t:'Precisando ser reacendida', p:1, r:'Você sente que precisa reacender a fé. Teresa mostra que nunca é tarde para recomeçar.'}]}
+];
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const embaralhar=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function mostrar(id){document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));$(id).classList.add('ativa');scrollTo(0,0)}
+
+$('chips').innerHTML=SANTOS.map(s=>`<span class="chip" style="background:${s.cor}">${s.nome}</span>`).join('');
+
+let nome='',atual=0,resp=[],ordemOp=[];
+function iniciar(){
+  nome=$('nome').value.trim();
+  if(!nome){$('nome').focus();$('nome').style.borderColor='#b4534b';return}
+  atual=0;resp=new Array(PERGUNTAS.length).fill(null);
+  ordemOp=PERGUNTAS.map(p=>embaralhar(p.op.map((_,i)=>i)));
+  mostrar('t-quiz');render();
+}
+$('nome').addEventListener('keydown',e=>{if(e.key==='Enter')iniciar()});
+
+function render(){
+  const p=PERGUNTAS[atual];
+  $('prog').style.width=(atual/PERGUNTAS.length*100)+'%';
+  $('cont').textContent=`Pergunta ${atual+1} de ${PERGUNTAS.length}`;
+  $('historia').textContent=p.historia;
+  $('pergunta').textContent=p.texto;
+  $('opcoes').innerHTML=ordemOp[atual].map((oi,k)=>`<button class="opcao ${resp[atual]===oi?'sel':''}" data-oi="${oi}">${String.fromCharCode(65+k)}) ${esc(p.op[oi].t)}</button>`).join('');
+  $('opcoes').querySelectorAll('.opcao').forEach(b=>b.onclick=()=>{resp[atual]=+b.dataset.oi;render()});
+  $('bVoltar').style.visibility=atual?'visible':'hidden';
+  $('bAvancar').textContent=atual===PERGUNTAS.length-1?'Ver meu resultado':'Próxima';
+  $('bAvancar').disabled=resp[atual]===null;
+}
+function voltar(){if(atual>0){atual--;render()}}
+function avancar(){if(resp[atual]===null)return;if(atual<PERGUNTAS.length-1){atual++;render()}else resultado()}
+
+function nivel(pts,s){
+  if(pts>=9)return `<b>Afinidade profunda.</b> Seu jeito de viver se parece muito com o de ${s.nome}: ${s.essencia}.`;
+  if(pts>=7)return `<b>Grande afinidade.</b> Você tem muito de ${s.nome} no coração: ${s.essencia}.`;
+  if(pts>=5)return `<b>Afinidade em crescimento.</b> Em alguns momentos você já vive o que ${s.nome} viveu: ${s.essencia}.`;
+  return `<b>Um santo para te acompanhar.</b> ${s.nome} pode te ajudar a descobrir ${s.essencia}.`;
+}
+
+function resultado(){
+  const r={};
+  SANTOS.forEach(s=>{
+    const idx=PERGUNTAS.map((p,i)=>p.santo===s.id?i:-1).filter(i=>i>=0);
+    const pts=idx.reduce((a,i)=>a+PERGUNTAS[i].op[resp[i]].p,0);
+    r[s.id]={pts,idx};
+  });
+  // Percentual = participação dos pontos de cada santo no total (soma sempre 100%)
+  const totalPts=SANTOS.reduce((a,s)=>a+r[s.id].pts,0);
+  SANTOS.forEach(s=>{const v=r[s.id].pts/totalPts*100;r[s.id].pct=Math.floor(v);r[s.id].resto=v-Math.floor(v)});
+  let falta=100-SANTOS.reduce((a,s)=>a+r[s.id].pct,0);
+  SANTOS.slice().sort((a,b)=>r[b.id].resto-r[a.id].resto).forEach(s=>{if(falta>0){r[s.id].pct++;falta--}});
+
+  const max=Math.max(...SANTOS.map(s=>r[s.id].pts));
+  const top=SANTOS.filter(s=>r[s.id].pts===max);
+  $('destaque').innerHTML=`<div class="sub">${esc(nome)}, ${top.length>1?'os santos que mais se parecem':'o santo que mais se parece'} com você hoje:</div>
+    <div class="grande">${top.map(s=>`<span style="color:${s.cor}">${s.nome}</span>`).join(' · ')}</div>
+    <div class="sub">Sua afinidade foi dividida entre os 5 santos, somando 100%. Veja abaixo como o seu coração se encontra com cada um deles.</div>`;
+  $('lista').innerHTML=SANTOS.slice().sort((a,b)=>r[b.id].pts-r[a.id].pts).map(s=>{
+    const d=r[s.id];
+    const itens=d.idx.map(i=>`<li>${esc(PERGUNTAS[i].op[resp[i]].r)}</li>`).join('');
+    return `<div class="santo-res">
+      <div class="topo"><b style="color:${s.cor}">${s.nome}</b><span>${d.pct}%</span></div>
+      <div class="barra"><div data-w="${d.pct}" style="background:${s.cor}"></div></div>
+      <div class="porque"><p>${nivel(d.pts,s)}</p><p style="margin-bottom:2px"><b>Por que esse percentual:</b></p><ul>${itens}</ul>
+      <div class="convite">💛 ${esc(s.convite)}</div></div></div>`;
+  }).join('');
+  mostrar('t-res');
+  setTimeout(()=>document.querySelectorAll('#lista .barra div').forEach(b=>b.style.width=b.dataset.w+'%'),120);
+}
+function reiniciar(){$('nome').value='';mostrar('t-inicio')}
+</script>
+</body>
+</html>
